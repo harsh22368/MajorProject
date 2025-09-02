@@ -1,0 +1,64 @@
+# IDRiD Dataset Configuration
+dataset:
+  name: "IDRiD"
+  base_path: "data/raw"
+  image_size: [4288, 2848]
+  processed_size: [1024, 1024]
+  
+  tasks:
+    grading:
+      train_images: 413
+      test_images: 103
+      dr_grades: [0, 1, 2, 3, 4]
+      dme_risk: [0, 1, 2]
+
+# HOG Configuration
+hog:
+  orientations: 9
+  pixels_per_cell: [8, 8]
+  cells_per_block: [2, 2]
+  block_norm: "L2-Hys"
+  patch_size: 32
+  stride: 32
+  feature_vector: true
+
+# GNN Configuration
+gnn:
+  input_dim: 36
+  hidden_dims: [64, 128, 64]
+  num_layers: 3
+  activation: "relu"
+  dropout: 0.2
+  graph_construction:
+    method: "knn"
+    k_neighbors: 8
+    distance_metric: "euclidean"
+
+# XGBoost Configuration
+xgboost:
+  n_estimators: 100
+  max_depth: 6
+  learning_rate: 0.1
+  subsample: 0.8
+  colsample_bytree: 0.8
+  random_state: 42
+
+# Training Configuration
+training:
+  batch_size: 8
+  learning_rate: 0.001
+  num_epochs: 50
+  validation_split: 0.2
+
+# Paths
+paths:
+  models: "results/models"
+  figures: "results/figures"
+  logs: "results/logs"
+  processed_data: "data/processed"
+
+# Clinical
+clinical:
+  confidence_threshold: 0.7
+  high_risk_grades: [3, 4]
+  urgent_referral_grades: [4]

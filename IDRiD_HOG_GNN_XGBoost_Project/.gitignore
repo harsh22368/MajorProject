@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.py[cod]
+.Python
+venv/
+.env
+
+# Data - keep structure but ignore actual dataset
+data/raw/*
+!data/raw/README.md
+data/processed/*
+
+# Results  
+results/
+*.pkl
+*.pth
+*.log
+
+# IDE
+.idea/
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db

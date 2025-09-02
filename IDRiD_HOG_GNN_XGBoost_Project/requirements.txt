@@ -1,0 +1,28 @@
+# Core ML frameworks - Compatible versions
+torch>=2.0.0
+torchvision>=0.15.0
+
+# Machine Learning
+xgboost>=1.7.0
+scikit-learn>=1.3.0
+scikit-image>=0.20.0
+
+# Computer Vision
+opencv-python>=4.8.0
+pillow>=10.0.0
+
+# Data Processing
+pandas>=2.0.0
+numpy>=1.24.0
+
+# Visualization & Web Interface
+matplotlib>=3.7.0
+seaborn>=0.12.0
+plotly>=5.15.0
+streamlit>=1.25.0
+
+# Utilities
+pyyaml>=6.0.0
+tqdm>=4.65.0
+networkx>=3.1.0
+joblib>=1.3.0
