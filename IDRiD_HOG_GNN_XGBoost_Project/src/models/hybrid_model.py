@@ -7,11 +7,11 @@ import os
 import logging
 from typing import Dict, List, Any, Optional, Tuple
 
-from src.data_processing.hog_extractor import IDRiDHOGExtractor
-from src.data_processing.graph_builder import IDRiDGraphBuilder
-from src.models.gnn_model import GNNWithFeatureExtraction
-from src.models.xgboost_classifier import MultiTaskXGBoost
-from src.utils.config import get_device
+from data_processing.hog_extractor import IDRiDHOGExtractor
+from data_processing.graph_builder import IDRiDGraphBuilder
+from models.gnn_model import GNNWithFeatureExtraction
+from models.xgboost_classifier import MultiTaskXGBoost
+from utils.config import get_device
 
 logger = logging.getLogger(__name__)
 

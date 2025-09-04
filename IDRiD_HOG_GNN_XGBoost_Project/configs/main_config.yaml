@@ -4,7 +4,7 @@ dataset:
   base_path: "data/raw"
   image_size: [4288, 2848]
   processed_size: [1024, 1024]
-  
+
   tasks:
     grading:
       train_images: 413
@@ -24,8 +24,8 @@ hog:
 
 # GNN Configuration
 gnn:
-  input_dim: 36
-  hidden_dims: [64, 128, 64]
+  input_dim: 324  # Changed from 36 to 324
+  hidden_dims: [256, 128, 64]  # Increased hidden dimensions
   num_layers: 3
   activation: "relu"
   dropout: 0.2
@@ -34,12 +34,13 @@ gnn:
     k_neighbors: 8
     distance_metric: "euclidean"
 
+
 # XGBoost Configuration
 xgboost:
   n_estimators: 100
   max_depth: 6
   learning_rate: 0.1
-  subsample: 0.8
+  subsample: 0.8cd
   colsample_bytree: 0.8
   random_state: 42
 
