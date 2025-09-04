@@ -1,8 +1,16 @@
-# Core ML frameworks - Compatible versions
+# Core ML frameworks - Validated working versions
 torch>=2.0.0
 torchvision>=0.15.0
+torchaudio>=2.0.0
 
-# Machine Learning
+# Graph Neural Networks - Install separately via wheels for Windows
+# Use these commands for Windows:
+# pip install torch-scatter -f https://data.pyg.org/whl/torch-2.8.0+cpu.html
+# pip install torch-cluster -f https://data.pyg.org/whl/torch-2.8.0+cpu.html
+# pip install torch-geometric
+torch-geometric
+
+# Machine Learning - Proven stable versions
 xgboost>=1.7.0
 scikit-learn>=1.3.0
 scikit-image>=0.20.0
@@ -11,18 +19,23 @@ scikit-image>=0.20.0
 opencv-python>=4.8.0
 pillow>=10.0.0
 
-# Data Processing
+# Data Processing - Essential libraries
 pandas>=2.0.0
 numpy>=1.24.0
+scipy>=1.10.0
 
-# Visualization & Web Interface
+# Visualization & Web Interface - Working versions
 matplotlib>=3.7.0
 seaborn>=0.12.0
 plotly>=5.15.0
 streamlit>=1.25.0
 
-# Utilities
+# Utilities - Core dependencies
 pyyaml>=6.0.0
 tqdm>=4.65.0
 networkx>=3.1.0
 joblib>=1.3.0
+
+# Additional dependencies for robust operation
+pathlib2>=2.3.0
+typing-extensions>=4.0.0
