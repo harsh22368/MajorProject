@@ -34,7 +34,7 @@ class XGBoostClassifier:
             subsample=self.xgb_config['subsample'],
             colsample_bytree=self.xgb_config['colsample_bytree'],
             random_state=self.xgb_config['random_state'],
-            objective='multi:softmax' if self.num_classes > 2 else 'binary:logistic',
+            objective='multi:softprob' if self.num_classes > 2 else 'binary:logistic',
             num_class=self.num_classes if self.num_classes > 2 else None,
             use_label_encoder=False
         )
@@ -247,75 +247,72 @@ class MultiTaskXGBoost:
             X_val: Optional[np.ndarray] = None,
             y_val_dr: Optional[np.ndarray] = None,
             y_val_dme: Optional[np.ndarray] = None) -> Dict[str, Any]:
-        """Train both classifiers with error handling"""
         logger.info("Training multi-task XGBoost (DR + DME)")
-
         results = {}
 
-        # Train DR classifier
         try:
             dr_results = self.dr_classifier.fit(X, y_dr, X_val, y_val_dr)
-            results['dr_results'] = dr_results
-            logger.info(f"DR classifier trained successfully. Accuracy: {dr_results['train_accuracy']:.4f}")
+            results["dr_results"] = dr_results
+            logger.info(f"DR classifier trained. Acc: {dr_results['train_accuracy']:.4f}")
         except Exception as e:
             logger.error(f"DR classifier training failed: {e}")
-            results['dr_results'] = {'train_accuracy': 0.0, 'error': str(e)}
+            results["dr_results"] = {"train_accuracy": 0.0, "error": str(e)}
 
-        # Train DME classifier
         try:
             dme_results = self.dme_classifier.fit(X, y_dme, X_val, y_val_dme)
-            results['dme_results'] = dme_results
-            logger.info(f"DME classifier trained successfully. Accuracy: {dme_results['train_accuracy']:.4f}")
+            results["dme_results"] = dme_results
+            logger.info(f"DME classifier trained. Acc: {dme_results['train_accuracy']:.4f}")
         except Exception as e:
             logger.error(f"DME classifier training failed: {e}")
-            results['dme_results'] = {'train_accuracy': 0.0, 'error': str(e)}
+            results["dme_results"] = {"train_accuracy": 0.0, "error": str(e)}
 
         return results
 
     def predict(self, X: np.ndarray) -> Dict[str, np.ndarray]:
-        """Predict both tasks with error handling"""
-        results = {}
-
+        """Predict both tasks with probabilities."""
+        out = {}
         try:
-            results['dr_predictions'] = self.dr_classifier.predict(X)
-            results['dr_probabilities'] = self.dr_classifier.predict_proba(X)
+            out["dr_predictions"] = self.dr_classifier.predict(X)
+            out["dr_probabilities"] = self.dr_classifier.predict_proba(X)
         except Exception as e:
             logger.error(f"DR prediction failed: {e}")
-            results['dr_predictions'] = np.zeros(len(X), dtype=int)
-            results['dr_probabilities'] = np.ones((len(X), 5)) / 5  # Uniform distribution
+            out["dr_predictions"] = np.zeros(len(X), dtype=int)
+            out["dr_probabilities"] = np.ones((len(X), self.dr_classifier.num_classes)) / self.dr_classifier.num_classes
 
         try:
-            results['dme_predictions'] = self.dme_classifier.predict(X)
-            results['dme_probabilities'] = self.dme_classifier.predict_proba(X)
+            out["dme_predictions"] = self.dme_classifier.predict(X)
+            out["dme_probabilities"] = self.dme_classifier.predict_proba(X)
         except Exception as e:
             logger.error(f"DME prediction failed: {e}")
-            results['dme_predictions'] = np.zeros(len(X), dtype=int)
-            results['dme_probabilities'] = np.ones((len(X), 3)) / 3  # Uniform distribution
+            out["dme_predictions"] = np.zeros(len(X), dtype=int)
+            out["dme_probabilities"] = np.ones((len(X), self.dme_classifier.num_classes)) / self.dme_classifier.num_classes
 
-        return results
+        return out
 
     def save_models(self, save_dir: str) -> None:
-        """Save both models"""
         os.makedirs(save_dir, exist_ok=True)
-
         try:
-            self.dr_classifier.save_model(os.path.join(save_dir, 'xgb_dr_model.pkl'))
+            self.dr_classifier.save_model(os.path.join(save_dir, "xgb_dr_model.pkl"))
         except Exception as e:
             logger.error(f"Failed to save DR model: {e}")
-
         try:
-            self.dme_classifier.save_model(os.path.join(save_dir, 'xgb_dme_model.pkl'))
+            self.dme_classifier.save_model(os.path.join(save_dir, "xgb_dme_model.pkl"))
         except Exception as e:
             logger.error(f"Failed to save DME model: {e}")
 
     def load_models(self, save_dir: str) -> None:
-        """Load both models"""
         try:
-            self.dr_classifier.load_model(os.path.join(save_dir, 'xgb_dr_model.pkl'))
+            self.dr_classifier.load_model(os.path.join(save_dir, "xgb_dr_model.pkl"))
         except Exception as e:
             logger.error(f"Failed to load DR model: {e}")
-
         try:
-            self.dme_classifier.load_model(os.path.join(save_dir, 'xgb_dme_model.pkl'))
+            self.dme_classifier.load_model(os.path.join(save_dir, "xgb_dme_model.pkl"))
         except Exception as e:
             logger.error(f"Failed to load DME model: {e}")
+
+    # Convenience wrappers used by evaluate.py
+    def predict_proba_dr(self, X: np.ndarray) -> np.ndarray:
+        return self.dr_classifier.predict_proba(X)
+
+    def predict_proba_dme(self, X: np.ndarray) -> np.ndarray:
+        return self.dme_classifier.predict_proba(X)
